@@ -1,0 +1,135 @@
+# =========================
+# Exercise
+# =========================
+type Exercise {
+  id: ID!
+  name: String!
+  category: String
+  equipment: [String!]!
+  primaryMuscles: [String!]!
+  secondaryMuscles: [String!]!
+  instructions: [String!]!
+  images: [String!]!
+  difficulty: Int
+}
+
+# =========================
+# Workout Set
+# =========================
+type Set {
+  _id: ID!
+  exerciseId: ID
+  exerciseName: String
+  reps: Int!
+  weight: Float!
+  date: String
+  userId: ID!
+}
+
+# =========================
+# Auth
+# =========================
+type User {
+  _id: ID!
+  email: String!
+}
+#==========================
+# Planner Profile
+# =========================
+
+type PlannerProfile {
+  id: ID!
+  userId: ID!
+  height: Float
+  weight: Float
+  goal: String
+  experienceLevel: String
+  availableEquipment: [String!]!
+  daysAvailable: Int
+  sessionMinutes: Int
+  createdAt: String
+  updatedAt: String
+}
+
+input PlannerProfileInput {
+  height: Float
+  weight: Float
+  goal: String
+  experienceLevel: String
+  availableEquipment: [String!]
+  daysAvailable: Int
+  sessionMinutes: Int
+}
+#===============
+# Login etc
+#===============
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+#---------------------------------------
+type OptimizedPlanExercise {
+  exerciseKey: String!
+  exerciseName: String!
+  sets: Int!
+}
+
+type OptimizedPlanDay {
+  day: String!
+  exercises: [OptimizedPlanExercise!]!
+}
+
+type OptimizedPlanSummary {
+  fatigue: Float!
+  fatigue_excess: Float!
+  min_shortfall: Float!
+  target_deviation: Float!
+}
+
+type OptimizedPlanResponse {
+  plan: [OptimizedPlanDay!]!
+  summary: OptimizedPlanSummary!
+}
+#---------------------------------------
+
+# =========================
+# Queries / Mutations
+# =========================
+type Query {
+  exercises(
+    muscle: String
+    equipment: String
+    q: String
+    limit: Int = 30
+    offset: Int = 0
+  ): [Exercise!]!
+
+  exercise(id: ID!): Exercise
+
+  sets(exerciseId: ID, exerciseName: String): [Set!]!
+
+  myPlannerProfile: PlannerProfile
+
+  generateOptimizedPlan: OptimizedPlanResponse!
+  generateMacroPlan: MacroPlan!
+}
+
+type Mutation {
+  signup(email: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  addWorkout(exerciseId: ID!, exerciseName: String!, reps: Int!, weight: Float!): Set!
+  savePlannerProfile(input: PlannerProfileInput!): PlannerProfile!
+  deleteWorkoutSet(setId: ID!): Boolean!
+}
+
+type MacroPlan {
+  calories: Float!
+  protein: Float!
+  carbs: Float!
+  fat: Float!
+  goal: String!
+  calorieTarget: Float
+  method: String
+}
